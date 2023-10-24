@@ -1,7 +1,7 @@
 import "../globals.css";
 import type { Metadata } from "next";
 import { Dosis } from "next/font/google";
-import Navbar from "../_components/HomePage/Navbar";
+import Navbar from "../_components/Shared/Navbar";
 import { WagmiProvider } from "../_providers/walletProvider";
 
 const dosis = Dosis({ subsets: ["latin"] });

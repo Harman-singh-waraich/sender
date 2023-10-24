@@ -1,5 +1,5 @@
 import React from "react";
-import Web3Button from "../Shared/Web3Button";
+import Web3Button from "./Web3Button";
 
 const Navbar = () => {
   return (
