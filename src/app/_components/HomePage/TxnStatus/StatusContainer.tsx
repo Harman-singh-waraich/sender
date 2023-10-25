@@ -13,7 +13,7 @@ const StatusContainer = ({ txn }: Props) => {
 
   //runs for pending txns
   useWaitForTransaction({
-    hash: hash!,
+    hash: status === TransactionStatus.pending ? hash! : undefined, //only run for pending txn, this hooks doesnt run when hash is undefined
     scopeKey: hash,
     onSuccess(data) {
       console.log("success", data.transactionHash);
