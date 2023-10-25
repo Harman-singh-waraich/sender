@@ -1,10 +1,13 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import GasSelector from "./GasSelector";
+import { Calldata, useContract } from "@/app/_hooks/useContract";
 
 type Props = {};
 
 const TxnForm = (props: Props) => {
+  const { transfer, isSubmitting } = useContract();
+
   const [formData, setFormData] = useState({
     assets: "",
     amount: "",
@@ -16,6 +19,12 @@ const TxnForm = (props: Props) => {
     (e: React.FormEvent) => {
       e.preventDefault();
       console.log("Form submitted:", formData);
+      const callData = {
+        tokenAddress: formData.assets,
+        recipient: formData.recipient,
+        amount: BigInt(formData.amount),
+      };
+      transfer(callData as Calldata);
     },
     [formData]
   );
@@ -78,7 +87,11 @@ const TxnForm = (props: Props) => {
       {/* gas selector */}
       <GasSelector />
       <div className="flex items-center justify-center">
-        <button type="submit" className="btn btn-accent btn-outline">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn btn-accent btn-outline"
+        >
           Submit
         </button>
       </div>

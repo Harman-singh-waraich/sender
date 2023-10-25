@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Dosis } from "next/font/google";
 import Navbar from "../_components/Shared/Navbar";
 import { WagmiProvider } from "../_providers/walletProvider";
+import { TransactionProvider } from "../_providers/transactionProvider";
 
 const dosis = Dosis({ subsets: ["latin"] });
 
@@ -22,8 +23,10 @@ export default function RootLayout({
         className={`h-auto px-6 md:px-16 lg:px-24 py-2 bg-neutral relative box-border  ${dosis.className}`}
       >
         <WagmiProvider>
-          <Navbar />
-          {children}
+          <TransactionProvider>
+            <Navbar />
+            {children}
+          </TransactionProvider>
         </WagmiProvider>
       </body>
     </html>

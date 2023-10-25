@@ -1,12 +1,12 @@
-export enum TxnStatus {
+export enum TransactionStatus {
   pending,
   success,
   failed,
 }
-export type Txn = {
+export type Transaction = {
   hash: string | undefined;
-  status: TxnStatus;
+  status: TransactionStatus;
   to: `0x${string}`;
-  amount: bigint;
-  gasPrice: bigint;
+  amount: string;
+  gasPrice: string;
 };

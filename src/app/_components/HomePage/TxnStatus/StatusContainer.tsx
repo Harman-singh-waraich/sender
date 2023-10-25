@@ -1,17 +1,17 @@
-import { Txn, TxnStatus } from "@/app/_types/types";
+import { Transaction, TransactionStatus } from "@/app/_types/types";
 import React from "react";
 
 type Props = {
-  txn: Txn;
+  txn: Transaction;
 };
 
 const StatusContainer = ({ txn }: Props) => {
   const { hash, to, amount, gasPrice, status } = txn;
 
   const accentColor =
-    status === TxnStatus.pending
+    status === TransactionStatus.pending
       ? "info"
-      : status === TxnStatus.success
+      : status === TransactionStatus.success
       ? "success"
       : "error";
 
@@ -23,8 +23,8 @@ const StatusContainer = ({ txn }: Props) => {
       <div className="flex flex-row justify-between">
         <p>Amount :- {amount.toString()}</p>
         <div>
-          {TxnStatus[status]}
-          {status === TxnStatus.pending && (
+          {TransactionStatus[status]}
+          {status === TransactionStatus.pending && (
             <span
               className={`loading loading-spinner loading-md text-info`}
             ></span>
