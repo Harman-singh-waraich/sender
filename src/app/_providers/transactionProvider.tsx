@@ -41,10 +41,23 @@ export const TransactionProvider: React.FC<TxnProviderProps> = ({
 
   const [transactions, setTransactions] = useState<Transaction[]>(initialState);
 
-  //check for saved txns in local storage
-  useEffect(() => {
+  const updateTransactionsFromLocalStorage = () => {
     const savedState = localStorage.getItem("transactions");
-    if (savedState) setTransactions([...JSON.parse(savedState)]);
+    if (savedState) {
+      setTransactions([...JSON.parse(savedState)]);
+    }
+  };
+
+  useEffect(() => {
+    // Check for saved txns on initial mount  in local storage
+    updateTransactionsFromLocalStorage();
+
+    // Listen for changes in local storge
+    window.addEventListener("storage", updateTransactionsFromLocalStorage);
+
+    return () => {
+      window.removeEventListener("storage", updateTransactionsFromLocalStorage);
+    };
   }, []);
 
   //update txns in local storage
@@ -55,7 +68,6 @@ export const TransactionProvider: React.FC<TxnProviderProps> = ({
   }, [transactions]);
 
   //actions
-
   const addTxn = (txn: Transaction) => {
     const newState = [txn, ...transactions];
 

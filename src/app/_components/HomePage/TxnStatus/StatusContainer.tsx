@@ -34,14 +34,14 @@ const StatusContainer = ({ txn }: Props) => {
 
   const accentColor =
     status === TransactionStatus.pending
-      ? "info"
+      ? "border-info"
       : status === TransactionStatus.success
-      ? "success"
-      : "error";
+      ? "border-success"
+      : "border-error";
 
   return (
     <div
-      className={`flex flex-col p-2 gap-1 rounded-lg w-full max-w-sm md:max-w-md lg:max-w-lg border border-${accentColor}`}
+      className={`flex flex-col p-2 gap-1 rounded-lg w-full max-w-sm md:max-w-md lg:max-w-lg border ${accentColor}`}
     >
       <p>To :- {to}</p>
       <div className="flex flex-row justify-between">
