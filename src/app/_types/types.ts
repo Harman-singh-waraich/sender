@@ -4,7 +4,7 @@ export enum TransactionStatus {
   failed,
 }
 export type Transaction = {
-  hash: string | undefined;
+  hash: `0x${string}` | undefined;
   status: TransactionStatus;
   to: `0x${string}`;
   amount: string;

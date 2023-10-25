@@ -50,7 +50,6 @@ export const TransactionProvider: React.FC<TxnProviderProps> = ({
   //update txns in local storage
   useEffect(() => {
     if (transactions.length === 0) return;
-    console.log(transactions);
 
     localStorage.setItem("transactions", JSON.stringify(transactions));
   }, [transactions]);

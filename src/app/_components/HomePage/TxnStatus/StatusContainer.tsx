@@ -1,5 +1,7 @@
+import { useTransactionContext } from "@/app/_providers/transactionProvider";
 import { Transaction, TransactionStatus } from "@/app/_types/types";
 import React from "react";
+import { useWaitForTransaction } from "wagmi";
 
 type Props = {
   txn: Transaction;
@@ -7,6 +9,28 @@ type Props = {
 
 const StatusContainer = ({ txn }: Props) => {
   const { hash, to, amount, gasPrice, status } = txn;
+  const { updateTxnValue } = useTransactionContext();
+
+  //runs for pending txns
+  useWaitForTransaction({
+    hash: hash!,
+    scopeKey: hash,
+    onSuccess(data) {
+      console.log("success", data.transactionHash);
+
+      updateTxnValue(data.transactionHash, {
+        status: TransactionStatus.success,
+      });
+    },
+    onError(err) {
+      console.log(err);
+      updateTxnValue(hash, { status: TransactionStatus.failed });
+    },
+    onReplaced(response) {
+      console.log("replaced", response);
+      updateTxnValue(hash, { status: TransactionStatus.failed });
+    },
+  });
 
   const accentColor =
     status === TransactionStatus.pending
