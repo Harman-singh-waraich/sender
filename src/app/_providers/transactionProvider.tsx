@@ -57,7 +57,7 @@ export const TransactionProvider: React.FC<TxnProviderProps> = ({
   //actions
 
   const addTxn = (txn: Transaction) => {
-    const newState = [...transactions, txn];
+    const newState = [txn, ...transactions];
 
     setTransactions(newState);
   };

@@ -10,3 +10,5 @@ export type Transaction = {
   amount: string;
   gasPrice: string;
 };
+
+export type Gas = { speed: "custom" | "slow" | "avg" | "fast"; value?: bigint };

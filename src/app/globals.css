@@ -25,3 +25,7 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.btn {
+  @apply flex flex-col h-fit p-2 items-center rounded-lg flex-nowrap;
+}

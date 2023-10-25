@@ -43,7 +43,7 @@ const StatusContainer = ({ txn }: Props) => {
     <div
       className={`flex flex-col p-2 gap-1 rounded-lg w-full max-w-sm md:max-w-md lg:max-w-lg border border-${accentColor}`}
     >
-      <p>To :- {hash}</p>
+      <p>To :- {to}</p>
       <div className="flex flex-row justify-between">
         <p>Amount :- {amount.toString()}</p>
         <div>

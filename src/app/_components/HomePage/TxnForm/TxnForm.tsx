@@ -1,29 +1,43 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import GasSelector from "./GasSelector";
 import { Calldata, useContract } from "@/app/_hooks/useContract";
+import { isValidEthereumAddress } from "@/app/_utils/helpers";
+import { Gas } from "@/app/_types/types";
 
-type Props = {};
-
-const TxnForm = (props: Props) => {
+const TxnForm = () => {
   const { transfer, isSubmitting } = useContract();
 
   const [formData, setFormData] = useState({
-    assets: "",
+    tokenAddress: "",
     amount: "",
     recipient: "",
+    selectedPrice: { speed: "custom" } as Gas,
   });
 
+  const isSubmittionDisabled = useMemo(
+    () =>
+      isSubmitting ||
+      formData.amount === "" ||
+      !isValidEthereumAddress(formData.recipient) ||
+      !isValidEthereumAddress(formData.tokenAddress),
+    [isSubmitting, formData]
+  );
+
+  //handlers
   // Function to handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    const callData = {
-      tokenAddress: formData.assets,
-      recipient: formData.recipient,
+    if (isSubmittionDisabled) return;
+
+    const callData: Calldata = {
+      tokenAddress: formData.tokenAddress as `0x${string}`,
+      recipient: formData.recipient as `0x${string}`,
       amount: BigInt(formData.amount),
+      gasPrice: formData.selectedPrice.value,
     };
-    transfer(callData as Calldata);
+    transfer(callData);
   };
 
   // Function to handle input changes
@@ -34,6 +48,11 @@ const TxnForm = (props: Props) => {
       [name]: value,
     });
   };
+
+  const selectGasPrice = (gasPrice: Gas) => {
+    setFormData({ ...formData, selectedPrice: gasPrice });
+  };
+
   return (
     <form
       className="mt-6 px-6 md:px-16 lg:px-32 w-full flex flex-col items-center justify-center gap-6"
@@ -45,11 +64,11 @@ const TxnForm = (props: Props) => {
         </label>
         <input
           type="text"
-          name="assets"
-          value={formData.assets}
+          name="tokenAddress"
+          value={formData.tokenAddress}
           onChange={handleChange}
           className="input input-bordered input-accent-content w-full  max-w-2xl "
-          placeholder="Enter asset address"
+          placeholder="Enter token address"
         />
       </div>
       <div className="w-full flex flex-col items-center">
@@ -58,14 +77,21 @@ const TxnForm = (props: Props) => {
         </label>
         <div className="join w-full max-w-2xl">
           <input
-            type="text"
+            type="number"
             name="amount"
             value={formData.amount}
             onChange={handleChange}
             className=" join-item input input-bordered input-accent-content w-full max-w-2xl"
             placeholder="Enter amount"
           />
-          <button className="join-item btn btn-primary">Max</button>
+          <button
+            className="join-item btn btn-primary"
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+          >
+            Max
+          </button>
         </div>
       </div>
       <div className="w-full flex flex-col items-center">
@@ -82,14 +108,25 @@ const TxnForm = (props: Props) => {
         />
       </div>
       {/* gas selector */}
-      <GasSelector />
+      <GasSelector
+        selectedPrice={formData.selectedPrice}
+        onSelect={selectGasPrice}
+        isDisabled={isSubmitting}
+      />
       <div className="flex items-center justify-center">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmittionDisabled}
           className="btn btn-accent btn-outline"
         >
-          Submit
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-1">
+              Confirming
+              <span className="loading loading-bars loading-sm"></span>
+            </span>
+          ) : (
+            "Submit"
+          )}
         </button>
       </div>
     </form>

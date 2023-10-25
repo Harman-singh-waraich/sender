@@ -1,28 +1,60 @@
+import { useGas } from "@/app/_hooks/useGas";
+import { Gas } from "@/app/_types/types";
+import { formatTime } from "@/app/_utils/helpers";
 import React from "react";
+import { parseGwei } from "viem";
 
 type Props = {
-  selectedPrice?: string;
-  onSelect?: () => void;
+  selectedPrice: Gas;
+  onSelect: (gasPrice: Gas) => void;
+  isDisabled: boolean;
 };
-//TODO : fetch gas prices from etherscan
-const GasSelector = (props: Props) => {
+
+const GasSelector = ({ selectedPrice, onSelect, isDisabled }: Props) => {
+  const { gasEstimates, isLoading } = useGas();
+
   return (
-    <div className="w-full grid grid-cols-3 gap-4">
-      <button className=" btn btn-outline btn-error flex flex-col items-center rounded-lg">
-        <p>Slow</p>
-        <p>🥲 1 Gwei</p>
-        <p>~1 min</p>
-      </button>
-      <button className=" btn btn-outline btn-info  flex flex-col items-center rounded-lg">
-        <p>Avg.</p>
-        <p>😁 2 Gwei</p>
-        <p>~30 sec</p>
-      </button>
-      <button className=" btn btn-outline btn-success  flex flex-col items-center rounded-lg">
-        <p>Fast</p>
-        <p>🤩 3 Gwei</p>
-        <p>~15 sec</p>
-      </button>
+    <div
+      className={`w-full min-h-fit grid grid-cols-3 gap-4 transition-opacity duration-1000 ${
+        isLoading ? "opacity-50" : "opacity-100"
+      } ${isDisabled || isLoading ? "btn-disabled opacity-50" : ""}`}
+    >
+      {/* slow option */}
+      <div
+        className={`btn btn-outline btn-error  ${
+          selectedPrice?.speed === "slow" && "btn-active"
+        }  `}
+        onClick={() =>
+          onSelect({ speed: "slow", value: parseGwei(gasEstimates[0]?.gas) })
+        }
+      >
+        <p>Slow - 🥲 {gasEstimates[0]?.gas} Gwei</p>
+        <p>~{formatTime(gasEstimates[0]?.estimatedTime)}</p>
+      </div>
+      {/* avg option */}
+      <div
+        className={` btn btn-outline btn-info ${
+          selectedPrice?.speed === "avg" && "btn-active"
+        }`}
+        onClick={() =>
+          onSelect({ speed: "avg", value: parseGwei(gasEstimates[1]?.gas) })
+        }
+      >
+        <p>Avg. - 😁 {gasEstimates[1]?.gas} Gwei</p>
+        <p>~{formatTime(gasEstimates[1]?.estimatedTime)}</p>
+      </div>
+      {/* fast option */}
+      <div
+        className={` btn btn-outline btn-success ${
+          selectedPrice?.speed === "fast" && "btn-active"
+        }`}
+        onClick={() =>
+          onSelect({ speed: "fast", value: parseGwei(gasEstimates[2]?.gas) })
+        }
+      >
+        <p>Fast - 🤩 {gasEstimates[2]?.gas} Gwei</p>
+        <p>~{formatTime(gasEstimates[2]?.estimatedTime)}</p>
+      </div>
     </div>
   );
 };
