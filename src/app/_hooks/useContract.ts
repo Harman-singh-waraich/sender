@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { erc20ABI, useContractWrite, useWaitForTransaction } from "wagmi";
+import { erc20ABI, useWaitForTransaction } from "wagmi";
 import { TransactionStatus } from "../_types/types";
 import { writeContract } from "wagmi/actions";
 import { useTransactionContext } from "../_providers/transactionProvider";
@@ -14,7 +14,7 @@ export interface Calldata {
 export const useContract = () => {
   const [hash, setHash] = useState<`0x${string}` | undefined>();
   const [isSubmitting, setSubmitting] = useState(false);
-  const { actions } = useTransactionContext();
+  const { addTxn, updateTxnValue } = useTransactionContext();
   //send token function
   //register hash => save state to local storage
   //track txn
@@ -31,7 +31,7 @@ export const useContract = () => {
         console.log(data.hash);
         setHash(data.hash);
         setSubmitting(false);
-        actions.addTxn({
+        addTxn({
           hash: data.hash,
           to: callData.recipient,
           amount: callData.amount.toString(),
@@ -44,20 +44,21 @@ export const useContract = () => {
 
   useWaitForTransaction({
     hash: hash,
+    scopeKey: hash,
     onSuccess(data) {
       console.log("success");
 
-      actions.updateTxnValue(data.transactionHash, {
+      updateTxnValue(data.transactionHash, {
         status: TransactionStatus.success,
       });
     },
     onError(err) {
       console.log(err);
-      actions.updateTxnValue(hash, { status: TransactionStatus.failed });
+      updateTxnValue(hash, { status: TransactionStatus.failed });
     },
     onReplaced(response) {
       console.log("replaced", response);
-      actions.updateTxnValue(hash, { status: TransactionStatus.failed });
+      updateTxnValue(hash, { status: TransactionStatus.failed });
     },
   });
 

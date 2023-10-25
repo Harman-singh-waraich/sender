@@ -15,19 +15,16 @@ const TxnForm = (props: Props) => {
   });
 
   // Function to handle form submission
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      console.log("Form submitted:", formData);
-      const callData = {
-        tokenAddress: formData.assets,
-        recipient: formData.recipient,
-        amount: BigInt(formData.amount),
-      };
-      transfer(callData as Calldata);
-    },
-    [formData]
-  );
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    const callData = {
+      tokenAddress: formData.assets,
+      recipient: formData.recipient,
+      amount: BigInt(formData.amount),
+    };
+    transfer(callData as Calldata);
+  };
 
   // Function to handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
