@@ -72,7 +72,11 @@ export const useTokens = () => {
 
       //remove tokens like "rare.io" and stuff
       const filteredTokens = unfilteredTokens.filter(
-        (token) => token && !token.name.includes(".")
+        (token) =>
+          token &&
+          !token.name.includes(".") &&
+          !token.name.includes("@") &&
+          !token.name.includes("&")
       );
 
       //fetch token details

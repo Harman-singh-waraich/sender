@@ -1,11 +1,11 @@
 import React from "react";
-import Web3Button from "./Web3Button";
+import Web3Button from "../Shared/Web3Button";
 
 const Navbar = () => {
   return (
-    <div className="navbar backdrop-blur-sm bg-base-100 border-2 border-neutral rounded-full    box-border">
+    <div className="navbar     box-border border-b border-gray-400">
       <div className="flex-1">
-        <a className="btn btn-ghost normal-case text-xl">Sender</a>
+        <a className="normal-case text-xl md:text-2xl font-semibold">Sender</a>
       </div>
       <div className="flex-none">
         <Web3Button />

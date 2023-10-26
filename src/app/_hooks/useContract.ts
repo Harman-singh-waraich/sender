@@ -42,6 +42,13 @@ export const useContract = () => {
           symbol: callData.symbol,
           decimals: callData.decimals,
         });
+
+        if (typeof window) {
+          window.scrollBy({
+            top: 200,
+            behavior: "smooth",
+          });
+        }
       })
       .catch((err) => {
         setSubmitting(false);

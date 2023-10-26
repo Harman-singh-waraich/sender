@@ -19,5 +19,14 @@ const config: Config = {
   daisyui: {
     themes: ["synthwave"],
   },
+  safelist: [
+    {
+      pattern: /text-(success|info|error)/,
+    },
+
+    {
+      pattern: /border-(success|info|error)/,
+    },
+  ],
 };
 export default config;

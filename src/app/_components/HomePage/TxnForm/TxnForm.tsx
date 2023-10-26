@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 import GasSelector from "./GasSelector";
 import { Calldata, useContract } from "@/app/_hooks/useContract";
-import { isValidEthereumAddress } from "@/app/_utils/helpers";
+import { balanceCheck, isValidEthereumAddress } from "@/app/_utils/helpers";
 import { Gas } from "@/app/_types/types";
 import TokenSelector from "./TokenSelector";
 import { Address, formatUnits, parseUnits } from "viem";
@@ -20,7 +20,7 @@ const TxnForm = () => {
 
   const [formData, setFormData] = useState<FormData>({
     tokenAddress: "",
-    amount: "",
+    amount: "0",
     recipient: "",
     selectedPrice: { speed: "custom" } as Gas,
   });
@@ -42,7 +42,12 @@ const TxnForm = () => {
       !formData.recipient ||
       !formData.tokenAddress ||
       !isValidEthereumAddress(formData.recipient) ||
-      !isValidEthereumAddress(formData.tokenAddress),
+      !isValidEthereumAddress(formData.tokenAddress) ||
+      !balanceCheck(
+        formData.amount,
+        tokenBalance?.value!,
+        tokenBalance?.decimals!
+      ),
     [isSubmitting, formData]
   );
 
@@ -111,7 +116,15 @@ const TxnForm = () => {
             name="amount"
             value={formData.amount}
             onChange={handleChange}
-            className=" join-item input input-bordered input-accent-content w-full max-w-2xl"
+            className={`join-item input input-bordered input-accent-content w-full max-w-2xl ${
+              !balanceCheck(
+                formData.amount,
+                tokenBalance?.value,
+                tokenBalance?.decimals
+              )
+                ? "input-error"
+                : ""
+            }`}
             placeholder="Enter amount"
           />
           <button
@@ -142,7 +155,11 @@ const TxnForm = () => {
           name="recipient"
           value={formData.recipient}
           onChange={handleChange}
-          className="input input-bordered input-accent-content w-full max-w-2xl "
+          className={`input input-bordered input-accent-content w-full max-w-2xl ${
+            formData.recipient && !isValidEthereumAddress(formData.recipient)
+              ? "input-error"
+              : ""
+          }`}
           placeholder="Enter recipient"
         />
       </div>

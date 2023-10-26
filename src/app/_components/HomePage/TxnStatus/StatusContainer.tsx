@@ -1,6 +1,8 @@
+"use client";
 import { useTransactionContext } from "@/app/_providers/transactionProvider";
 import { Transaction, TransactionStatus } from "@/app/_types/types";
 import {
+  accentColor,
   getAddressExplorerLink,
   getTxnExplorerLink,
 } from "@/app/_utils/helpers";
@@ -17,6 +19,7 @@ const StatusContainer = ({ txn }: Props) => {
   const { hash, from, to, amount, gasPrice, status, symbol, decimals } = txn;
   const { updateTxnValue, addTxn } = useTransactionContext();
   const { chain } = useNetwork();
+
   //runs for pending txns
   useWaitForTransaction({
     hash: status === TransactionStatus.pending ? hash! : undefined, //only run for pending txn, this hooks doesnt run when hash is undefined
@@ -33,6 +36,7 @@ const StatusContainer = ({ txn }: Props) => {
       updateTxnValue(hash, { status: TransactionStatus.failed });
     },
     onReplaced(response) {
+      //on replace add new txn to state and update previous one
       console.log("replaced", response);
       const newStatus = TransactionStatus[response.reason];
 
@@ -52,16 +56,12 @@ const StatusContainer = ({ txn }: Props) => {
     },
   });
 
-  const accentColor =
-    status === TransactionStatus.pending
-      ? "info"
-      : status === TransactionStatus.success
-      ? "success"
-      : "error";
-
   return (
     <div
-      className={`flex flex-col p-2 gap-1 rounded-lg w-full max-w-md md:max-w-lg lg:max-w-2xl border border-${accentColor}`}
+      className={`flex flex-col p-2 gap-1 rounded-lg w-full max-w-md md:max-w-lg lg:max-w-2xl border ${accentColor(
+        status,
+        "border"
+      )} `}
     >
       <div className="w-full flex flex-row flex-wrap justify-between items-center">
         <p className="text-lg md:text-xl">
@@ -76,31 +76,34 @@ const StatusContainer = ({ txn }: Props) => {
           View on explorer
         </Link>
       </div>
-      <span className="text-sm md:text-base">
+      {/* from */}
+      <span className="text-sm md:text-base text-accent">
         From :{" "}
         <Link
           href={getAddressExplorerLink(from, chain?.id!)}
           target="_blank"
           rel="noreferrer"
-          className="text-sm md:text-base"
+          className="text-sm md:text-base text-white"
         >
           {from}
         </Link>
       </span>
-      <span className="text-sm md:text-base">
+      {/* to */}
+      <span className="text-sm md:text-base text-accent">
         To :{" "}
         <Link
           href={getAddressExplorerLink(to, chain?.id!)}
           target="_blank"
           rel="noreferrer"
-          className="text-sm md:text-base"
+          className="text-sm md:text-base text-white"
         >
           {to}
         </Link>
       </span>
 
+      {/* status */}
       <div className="flex flex-row justify-center items-center gap-1 self-end">
-        <span className={`text-${accentColor}`}>
+        <span className={`${accentColor(status, "text")}`}>
           {TransactionStatus[status]}
         </span>
         {status === TransactionStatus.pending && (

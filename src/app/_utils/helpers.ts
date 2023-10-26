@@ -1,5 +1,6 @@
-import { Address } from "viem";
+import { Address, parseUnits } from "viem";
 import { EXPLORER_BASE } from "../_constants";
+import { TransactionStatus } from "../_types/types";
 
 export const isValidEthereumAddress = (address: string) =>
   /^0x[a-fA-F0-9]{40}$/.test(address);
@@ -23,4 +24,23 @@ export const getTxnExplorerLink = (hash: string, chainId: number) => {
 
 export const getAddressExplorerLink = (address: Address, chainId: number) => {
   return `${EXPLORER_BASE[chainId]}` + "/address/" + address;
+};
+
+export const accentColor = (
+  status: TransactionStatus,
+  type: "text" | "border"
+) =>
+  status === TransactionStatus.pending
+    ? `${type}-info`
+    : status === TransactionStatus.success
+    ? `${type}-success`
+    : `${type}-error`;
+
+export const balanceCheck = (
+  inputAmount: string,
+  balance: bigint | undefined,
+  decimals: number | undefined
+) => {
+  if (!balance || !decimals) return true;
+  return parseUnits(inputAmount, decimals) <= balance;
 };
