@@ -2,6 +2,9 @@ export enum TransactionStatus {
   pending,
   success,
   failed,
+  replaced,
+  repriced,
+  cancelled,
 }
 export type Transaction = {
   hash: `0x${string}` | undefined;

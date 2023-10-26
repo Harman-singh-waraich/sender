@@ -9,7 +9,7 @@ type Props = {
 
 const StatusContainer = ({ txn }: Props) => {
   const { hash, to, amount, gasPrice, status } = txn;
-  const { updateTxnValue } = useTransactionContext();
+  const { updateTxnValue, addTxn } = useTransactionContext();
 
   //runs for pending txns
   useWaitForTransaction({
@@ -28,7 +28,18 @@ const StatusContainer = ({ txn }: Props) => {
     },
     onReplaced(response) {
       console.log("replaced", response);
-      updateTxnValue(hash, { status: TransactionStatus.failed });
+      const newStatus = TransactionStatus[response.reason];
+
+      updateTxnValue(hash, { status: newStatus });
+      const newTxn = response.transaction;
+
+      addTxn({
+        hash: newTxn.hash,
+        to: newTxn.to!,
+        amount: amount,
+        gasPrice: gasPrice,
+        status: TransactionStatus.pending,
+      });
     },
   });
 

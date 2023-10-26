@@ -69,16 +69,16 @@ export const TransactionProvider: React.FC<TxnProviderProps> = ({
 
   //actions
   const addTxn = (txn: Transaction) => {
-    const newState = [txn, ...transactions];
-
-    setTransactions(newState);
+    setTransactions((prevState) => [txn, ...prevState]);
   };
 
   const updateTxnValue = (hash: Transaction["hash"], newData: any) => {
-    const updatedTransactions = transactions.map((txn) =>
-      txn.hash === hash ? { ...txn, ...newData } : txn
-    );
-    setTransactions(updatedTransactions);
+    setTransactions((prevState) => {
+      const updatedTransactions = prevState.map((txn) =>
+        txn.hash === hash ? { ...txn, ...newData } : txn
+      );
+      return [...updatedTransactions];
+    });
   };
 
   return (

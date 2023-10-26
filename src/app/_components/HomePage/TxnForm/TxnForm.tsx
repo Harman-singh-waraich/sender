@@ -26,9 +26,14 @@ const TxnForm = () => {
     selectedPrice: { speed: "custom" } as Gas,
   });
 
-  const { data: tokenBalance, isLoading } = useBalance({
+  const {
+    data: tokenBalance,
+    isLoading,
+    isRefetching,
+  } = useBalance({
     address: account,
     token: formData.tokenAddress as Address,
+    watch: true,
   });
 
   const isSubmittionDisabled = useMemo(
@@ -83,7 +88,7 @@ const TxnForm = () => {
   };
 
   return (
-    <form
+    <div
       className="mt-6 px-6 md:px-16 lg:px-32 w-full flex flex-col items-center justify-center gap-6"
       onSubmit={handleSubmit}
     >
@@ -109,15 +114,19 @@ const TxnForm = () => {
             placeholder="Enter amount"
           />
           <button
-            className="join-item btn btn-primary"
+            className="join-item btn btn-primary disabled:btn-outline"
             onClick={handleMax}
-            disabled={isSubmitting}
+            disabled={isSubmitting || formData.tokenAddress == ""}
           >
             Max
           </button>
         </div>
         {formData.tokenAddress && (
-          <label className="block text-sm font-bold mt-2">
+          <label
+            className={`block text-sm font-bold mt-2 transition-opacity duration-1000 ${
+              isRefetching ? "opacity-50" : "opacity-100"
+            }`}
+          >
             Balance :- {tokenBalance?.formatted} {tokenBalance?.symbol}
           </label>
         )}
@@ -147,6 +156,7 @@ const TxnForm = () => {
           type="submit"
           disabled={isSubmittionDisabled}
           className="btn btn-accent btn-outline"
+          onClick={handleSubmit}
         >
           {isSubmitting ? (
             <span className="flex items-center justify-center gap-1">
@@ -158,7 +168,7 @@ const TxnForm = () => {
           )}
         </button>
       </div>
-    </form>
+    </div>
   );
 };
 
