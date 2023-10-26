@@ -1,16 +1,22 @@
 import { useTransactionContext } from "@/app/_providers/transactionProvider";
 import { Transaction, TransactionStatus } from "@/app/_types/types";
+import {
+  getAddressExplorerLink,
+  getTxnExplorerLink,
+} from "@/app/_utils/helpers";
+import Link from "next/link";
 import React from "react";
-import { useWaitForTransaction } from "wagmi";
+import { formatUnits } from "viem";
+import { useNetwork, useWaitForTransaction } from "wagmi";
 
 type Props = {
   txn: Transaction;
 };
 
 const StatusContainer = ({ txn }: Props) => {
-  const { hash, to, amount, gasPrice, status } = txn;
+  const { hash, from, to, amount, gasPrice, status, symbol, decimals } = txn;
   const { updateTxnValue, addTxn } = useTransactionContext();
-
+  const { chain } = useNetwork();
   //runs for pending txns
   useWaitForTransaction({
     hash: status === TransactionStatus.pending ? hash! : undefined, //only run for pending txn, this hooks doesnt run when hash is undefined
@@ -35,36 +41,73 @@ const StatusContainer = ({ txn }: Props) => {
 
       addTxn({
         hash: newTxn.hash,
+        from: from,
         to: newTxn.to!,
         amount: amount,
         gasPrice: gasPrice,
         status: TransactionStatus.pending,
+        symbol: symbol,
+        decimals: decimals,
       });
     },
   });
 
   const accentColor =
     status === TransactionStatus.pending
-      ? "border-info"
+      ? "info"
       : status === TransactionStatus.success
-      ? "border-success"
-      : "border-error";
+      ? "success"
+      : "error";
 
   return (
     <div
-      className={`flex flex-col p-2 gap-1 rounded-lg w-full max-w-sm md:max-w-md lg:max-w-lg border ${accentColor}`}
+      className={`flex flex-col p-2 gap-1 rounded-lg w-full max-w-md md:max-w-lg lg:max-w-2xl border border-${accentColor}`}
     >
-      <p>To :- {to}</p>
-      <div className="flex flex-row justify-between">
-        <p>Amount :- {amount.toString()}</p>
-        <div>
+      <div className="w-full flex flex-row flex-wrap justify-between items-center">
+        <p className="text-lg md:text-xl">
+          {formatUnits(BigInt(amount), decimals)} {symbol}
+        </p>
+        <Link
+          href={getTxnExplorerLink(hash as string, chain?.id!)}
+          target="_blank"
+          rel="noreferrer"
+          className=" text-blue-300 underline"
+        >
+          View on explorer
+        </Link>
+      </div>
+      <span className="text-sm md:text-base">
+        From :{" "}
+        <Link
+          href={getAddressExplorerLink(from, chain?.id!)}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm md:text-base"
+        >
+          {from}
+        </Link>
+      </span>
+      <span className="text-sm md:text-base">
+        To :{" "}
+        <Link
+          href={getAddressExplorerLink(to, chain?.id!)}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm md:text-base"
+        >
+          {to}
+        </Link>
+      </span>
+
+      <div className="flex flex-row justify-center items-center gap-1 self-end">
+        <span className={`text-${accentColor}`}>
           {TransactionStatus[status]}
-          {status === TransactionStatus.pending && (
-            <span
-              className={`loading loading-spinner loading-md text-info`}
-            ></span>
-          )}
-        </div>
+        </span>
+        {status === TransactionStatus.pending && (
+          <span
+            className={`loading loading-spinner loading-md text-info`}
+          ></span>
+        )}
       </div>
     </div>
   );

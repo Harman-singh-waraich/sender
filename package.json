@@ -12,6 +12,7 @@
     "@rainbow-me/rainbowkit": "^1.1.3",
     "@reduxjs/toolkit": "^1.9.7",
     "encoding": "^0.1.13",
+    "framer-motion": "^10.16.4",
     "lokijs": "^1.5.12",
     "next": "13.5.4",
     "pino-pretty": "^10.2.3",

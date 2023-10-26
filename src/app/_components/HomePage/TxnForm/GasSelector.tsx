@@ -21,7 +21,7 @@ const GasSelector = ({ selectedPrice, onSelect, isDisabled }: Props) => {
     >
       {/* slow option */}
       <div
-        className={`btn btn-outline btn-error  ${
+        className={`btn h-full min-h-full text-sm md:text-base  btn-outline btn-error  ${
           selectedPrice?.speed === "slow" && "btn-active"
         }  `}
         onClick={() =>
@@ -33,7 +33,7 @@ const GasSelector = ({ selectedPrice, onSelect, isDisabled }: Props) => {
       </div>
       {/* avg option */}
       <div
-        className={` btn btn-outline btn-info ${
+        className={` btn btn-outline btn-info h-full min-h-full text-sm md:text-base ${
           selectedPrice?.speed === "avg" && "btn-active"
         }`}
         onClick={() =>
@@ -45,7 +45,7 @@ const GasSelector = ({ selectedPrice, onSelect, isDisabled }: Props) => {
       </div>
       {/* fast option */}
       <div
-        className={` btn btn-outline btn-success ${
+        className={`btn btn-outline h-full min-h-full text-sm md:text-base  btn-success ${
           selectedPrice?.speed === "fast" && "btn-active"
         }`}
         onClick={() =>

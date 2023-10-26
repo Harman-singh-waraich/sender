@@ -65,6 +65,8 @@ export const TransactionProvider: React.FC<TxnProviderProps> = ({
     if (transactions.length === 0) return;
 
     localStorage.setItem("transactions", JSON.stringify(transactions));
+
+    window.scrollBy({ top: 200, behavior: "smooth" });
   }, [transactions]);
 
   //actions

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { erc20ABI, usePublicClient } from "wagmi";
+import { erc20ABI, useAccount } from "wagmi";
 import { TransactionStatus } from "../_types/types";
 import { writeContract } from "wagmi/actions";
 import { useTransactionContext } from "../_providers/transactionProvider";
@@ -10,12 +10,14 @@ export interface Calldata {
   recipient: `0x${string}`;
   amount: bigint;
   gasPrice?: bigint;
+  symbol: string;
+  decimals: number;
 }
 
 export const useContract = () => {
   const [isSubmitting, setSubmitting] = useState(false);
   const { addTxn } = useTransactionContext();
-  const publicClient = usePublicClient();
+  const { address } = useAccount();
   //send token function
   //register hash => save state to local storage
   //TODO : add goerli gas price
@@ -32,10 +34,13 @@ export const useContract = () => {
         setSubmitting(false);
         addTxn({
           hash: data.hash,
+          from: address!,
           to: callData.recipient,
           amount: callData.amount.toString(),
           gasPrice: callData.gasPrice?.toString() ?? "1",
           status: TransactionStatus.pending,
+          symbol: callData.symbol,
+          decimals: callData.decimals,
         });
       })
       .catch((err) => {

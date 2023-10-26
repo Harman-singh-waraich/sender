@@ -1,3 +1,5 @@
+import { Address } from "viem";
+
 export enum TransactionStatus {
   pending,
   success,
@@ -7,11 +9,14 @@ export enum TransactionStatus {
   cancelled,
 }
 export type Transaction = {
-  hash: `0x${string}` | undefined;
+  hash: Address | undefined;
   status: TransactionStatus;
-  to: `0x${string}`;
+  from: Address;
+  to: Address;
   amount: string;
   gasPrice: string;
+  symbol: string;
+  decimals: number;
 };
 
 export type Gas = { speed: "custom" | "slow" | "avg" | "fast"; value?: bigint };

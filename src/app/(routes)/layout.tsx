@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`h-auto px-6 md:px-16 lg:px-24 py-2 bg-neutral relative box-border  ${dosis.className}`}
+        className={`h-auto px-2 md:px-16 lg:px-24 py-2 bg-neutral relative box-border  ${dosis.className}`}
       >
         <WagmiProvider>
           <TransactionProvider>

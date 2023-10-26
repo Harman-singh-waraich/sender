@@ -28,7 +28,7 @@ const TokenSelector = ({
   };
 
   return (
-    <div className="w-full flex flex-col items-start">
+    <div className="w-full flex flex-col items-center">
       <label className="block text-gray-400 text-sm font-bold mb-2">
         Select token or enter custom token
       </label>

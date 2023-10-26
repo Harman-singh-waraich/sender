@@ -4,10 +4,9 @@ import GasSelector from "./GasSelector";
 import { Calldata, useContract } from "@/app/_hooks/useContract";
 import { isValidEthereumAddress } from "@/app/_utils/helpers";
 import { Gas } from "@/app/_types/types";
-import { useTokens } from "@/app/_hooks/useTokens";
 import TokenSelector from "./TokenSelector";
 import { Address, formatUnits, parseUnits } from "viem";
-import { useAccount, useBalance, useToken } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 interface FormData {
   tokenAddress: Address | string;
   amount: string;
@@ -59,6 +58,8 @@ const TxnForm = () => {
       recipient: formData.recipient as `0x${string}`,
       amount: parseUnits(formData.amount, tokenBalance?.decimals),
       gasPrice: formData.selectedPrice.value,
+      symbol: tokenBalance.symbol,
+      decimals: tokenBalance.decimals,
     };
     transfer(callData);
   };
@@ -100,7 +101,7 @@ const TxnForm = () => {
       />
 
       {/* amount */}
-      <div className="w-full flex flex-col items-start">
+      <div className="w-full flex flex-col items-center">
         <label className="block text-gray-400 text-sm font-bold mb-2">
           Amount
         </label>
@@ -132,7 +133,7 @@ const TxnForm = () => {
         )}
       </div>
       {/* recipient */}
-      <div className="w-full flex flex-col items-start">
+      <div className="w-full flex flex-col items-center">
         <label className="block text-gray-400 text-sm font-bold mb-2 ">
           Recipient
         </label>
@@ -146,6 +147,9 @@ const TxnForm = () => {
         />
       </div>
       {/* gas selector */}
+      <span className="block text-gray-400 text-sm font-bold mb-2 ">
+        Select a gas price if you want
+      </span>
       <GasSelector
         selectedPrice={formData.selectedPrice}
         onSelect={selectGasPrice}
