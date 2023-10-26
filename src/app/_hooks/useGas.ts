@@ -12,6 +12,7 @@ export const useGas = () => {
         data.result.ProposeGasPrice,
         data.result.FastGasPrice,
       ]);
+
   const { data, error, isLoading, isValidating } = useSWR(
     `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=MXEI49CNKBAJZKYCCKUW2YSVR4X7B1VV8R`,
     fetcher,

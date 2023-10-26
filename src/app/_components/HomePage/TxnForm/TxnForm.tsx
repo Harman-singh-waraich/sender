@@ -4,21 +4,39 @@ import GasSelector from "./GasSelector";
 import { Calldata, useContract } from "@/app/_hooks/useContract";
 import { isValidEthereumAddress } from "@/app/_utils/helpers";
 import { Gas } from "@/app/_types/types";
+import { useTokens } from "@/app/_hooks/useTokens";
+import TokenSelector from "./TokenSelector";
+import { Address, formatUnits, parseUnits } from "viem";
+import { useAccount, useBalance, useToken } from "wagmi";
+interface FormData {
+  tokenAddress: Address | string;
+  amount: string;
+  recipient: Address | string;
+  selectedPrice: Gas;
+}
 
 const TxnForm = () => {
   const { transfer, isSubmitting } = useContract();
+  const { address: account } = useAccount();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     tokenAddress: "",
     amount: "",
     recipient: "",
     selectedPrice: { speed: "custom" } as Gas,
   });
 
+  const { data: tokenBalance, isLoading } = useBalance({
+    address: account,
+    token: formData.tokenAddress as Address,
+  });
+
   const isSubmittionDisabled = useMemo(
     () =>
       isSubmitting ||
-      formData.amount === "" ||
+      !formData.amount ||
+      !formData.recipient ||
+      !formData.tokenAddress ||
       !isValidEthereumAddress(formData.recipient) ||
       !isValidEthereumAddress(formData.tokenAddress),
     [isSubmitting, formData]
@@ -29,23 +47,34 @@ const TxnForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    if (isSubmittionDisabled) return;
+    if (isSubmittionDisabled || !tokenBalance?.decimals) return;
 
     const callData: Calldata = {
       tokenAddress: formData.tokenAddress as `0x${string}`,
       recipient: formData.recipient as `0x${string}`,
-      amount: BigInt(formData.amount),
+      amount: parseUnits(formData.amount, tokenBalance?.decimals),
       gasPrice: formData.selectedPrice.value,
     };
     transfer(callData);
   };
 
   // Function to handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
+    });
+  };
+
+  const handleMax = () => {
+    if (isLoading || !tokenBalance?.value || !tokenBalance?.decimals) return;
+
+    setFormData({
+      ...formData,
+      amount: formatUnits(tokenBalance.value, tokenBalance.decimals),
     });
   };
 
@@ -58,21 +87,16 @@ const TxnForm = () => {
       className="mt-6 px-6 md:px-16 lg:px-32 w-full flex flex-col items-center justify-center gap-6"
       onSubmit={handleSubmit}
     >
-      <div className="w-full flex flex-col items-center">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          Asset
-        </label>
-        <input
-          type="text"
-          name="tokenAddress"
-          value={formData.tokenAddress}
-          onChange={handleChange}
-          className="input input-bordered input-accent-content w-full  max-w-2xl "
-          placeholder="Enter token address"
-        />
-      </div>
-      <div className="w-full flex flex-col items-center">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
+      {/* token selection */}
+      <TokenSelector
+        selectedToken={formData.tokenAddress as Address}
+        setSelectedToken={handleChange}
+        isDisabled={isSubmitting}
+      />
+
+      {/* amount */}
+      <div className="w-full flex flex-col items-start">
+        <label className="block text-gray-400 text-sm font-bold mb-2">
           Amount
         </label>
         <div className="join w-full max-w-2xl">
@@ -86,16 +110,21 @@ const TxnForm = () => {
           />
           <button
             className="join-item btn btn-primary"
-            onClick={(e) => {
-              e.preventDefault();
-            }}
+            onClick={handleMax}
+            disabled={isSubmitting}
           >
             Max
           </button>
         </div>
+        {formData.tokenAddress && (
+          <label className="block text-sm font-bold mt-2">
+            Balance :- {tokenBalance?.formatted} {tokenBalance?.symbol}
+          </label>
+        )}
       </div>
-      <div className="w-full flex flex-col items-center">
-        <label className="block text-gray-700 text-sm font-bold mb-2 ">
+      {/* recipient */}
+      <div className="w-full flex flex-col items-start">
+        <label className="block text-gray-400 text-sm font-bold mb-2 ">
           Recipient
         </label>
         <input
