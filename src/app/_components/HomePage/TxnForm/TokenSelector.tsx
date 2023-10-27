@@ -30,10 +30,13 @@ const TokenSelector = ({
 
   return (
     <div className="w-full flex flex-col items-center">
+      {/* label */}
       <label className="flex flex-row items-center gap-1 text-gray-400 text-sm font-bold mb-2">
         Select token or enter custom token{" "}
         <Tooltip tip="We automatically detect your holdings." />
       </label>
+
+      {/* input */}
       <div className="join w-full max-w-2xl">
         <input
           type="text"
@@ -47,6 +50,8 @@ const TokenSelector = ({
           }`}
           placeholder="Enter token address"
         />
+
+        {/* select options */}
         <select
           name="tokenAddress"
           className="join-item select select-bordered select-primary"

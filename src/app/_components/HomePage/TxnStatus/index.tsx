@@ -1,12 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import StatusContainer from "./StatusContainer";
 import { useTransactionContext } from "@/app/_providers/transactionProvider";
 
-type Props = {};
 //show list of txns, with pending and successfull
-const TxnStatuses = (props: Props) => {
-  //TODO: fetch txns appropiately
+const TxnStatuses = () => {
   const { transactions } = useTransactionContext();
 
   return (

@@ -13,8 +13,6 @@ const Web3Button = () => {
         openConnectModal,
         mounted,
       }) => {
-        // Note: If your app doesn't use authentication, you
-        // can remove all 'authenticationStatus' checks
         const ready = mounted;
         const connected = ready && account && chain;
 

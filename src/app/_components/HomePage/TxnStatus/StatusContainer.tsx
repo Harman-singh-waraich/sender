@@ -40,9 +40,11 @@ const StatusContainer = ({ txn }: Props) => {
       console.log("replaced", response);
       const newStatus = TransactionStatus[response.reason];
 
+      //updating the previous txn
       updateTxnValue(hash, { status: newStatus });
-      const newTxn = response.transaction;
 
+      const newTxn = response.transaction;
+      //adding the new txn to state
       addTxn({
         hash: newTxn.hash,
         from: from,

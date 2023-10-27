@@ -65,6 +65,7 @@ const TxnForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
+
     if (isSubmittionDisabled || !tokenBalance?.decimals) return;
 
     const callData: Calldata = {
@@ -75,6 +76,7 @@ const TxnForm = () => {
       symbol: tokenBalance.symbol,
       decimals: tokenBalance.decimals,
     };
+
     transfer(callData);
   };
 

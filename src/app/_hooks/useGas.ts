@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import useSWR from "swr";
-import { parseGwei } from "viem";
 import { useNetwork } from "wagmi";
 
 export enum GasTypes {
@@ -35,8 +33,8 @@ export const useGas = () => {
     error,
     isLoading,
     isValidating,
-  } = useSWR(`/api/gas-tracker?id=${chain?.name}`, fetcher, {
-    refreshInterval: 10000,
+  } = useSWR(`/api/gas-tracker?id=${chain?.id}`, fetcher, {
+    refreshInterval: 7000,
   });
 
   return {

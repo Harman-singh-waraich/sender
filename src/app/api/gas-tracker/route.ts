@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   const id = searchParams.get("id");
 
   const gasEstimates =
-    id === "mainnet" ? await getMainnetEstimates() : await getGoerliEstimates();
+    id === "1" ? await getMainnetEstimates() : await getGoerliEstimates();
 
   return NextResponse.json(gasEstimates);
 }

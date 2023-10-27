@@ -21,10 +21,10 @@ export const useContract = () => {
   const publicClient = usePublicClient();
   //send token function
   //register hash => save state to local storage
-  //TODO : add goerli gas price
   const transfer = async (callData: Calldata) => {
     setSubmitting(true);
 
+    //calculating estimated gas
     const gas = await publicClient.estimateContractGas({
       address: callData.tokenAddress,
       abi: erc20ABI,
@@ -33,13 +33,16 @@ export const useContract = () => {
       account: address!,
     });
 
+    //calculating default gas price if gas price from calldata is undefined
+    const defaultGasPrice = await publicClient.getGasPrice();
+
     writeContract({
       address: callData.tokenAddress,
       abi: erc20ABI,
       functionName: "transfer",
       args: [callData.recipient, callData.amount],
       gasPrice: callData.gasPrice,
-      gas: gas ?? BigInt(50000),
+      gas: gas ?? BigInt(50000), //setting default in case estimation fails
     })
       .then((data) => {
         setSubmitting(false);
@@ -48,12 +51,13 @@ export const useContract = () => {
           from: address!,
           to: callData.recipient,
           amount: callData.amount.toString(),
-          gasPrice: callData.gasPrice?.toString() ?? "1",
+          gasPrice: callData.gasPrice?.toString() ?? defaultGasPrice.toString(),
           status: TransactionStatus.pending,
           symbol: callData.symbol,
           decimals: callData.decimals,
         });
 
+        //scroll the window to show the history once user submit txns
         if (typeof window) {
           window.scrollBy({
             top: 200,
