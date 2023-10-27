@@ -32,7 +32,7 @@ const TokenSelector = ({
     <div className="w-full flex flex-col items-center">
       <label className="flex flex-row items-center gap-1 text-gray-400 text-sm font-bold mb-2">
         Select token or enter custom token{" "}
-        <Tooltip tip="We automatically detect your holdings. If you don't see a token, you can enter it manually." />
+        <Tooltip tip="We automatically detect your holdings." />
       </label>
       <div className="join w-full max-w-2xl">
         <input

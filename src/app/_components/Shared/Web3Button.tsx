@@ -11,7 +11,6 @@ const Web3Button = () => {
         openAccountModal,
         openChainModal,
         openConnectModal,
-        authenticationStatus,
         mounted,
       }) => {
         // Note: If your app doesn't use authentication, you
@@ -21,7 +20,7 @@ const Web3Button = () => {
 
         return (
           <div
-            className="p-2 backdrop-blur-sm border border-accent rounded-lg"
+            className=" p-2 backdrop-blur-sm border border-accent rounded-lg"
             {...(!ready && {
               "aria-hidden": true,
               style: {
@@ -57,7 +56,7 @@ const Web3Button = () => {
               }
 
               return (
-                <div style={{ display: "flex", gap: 12 }}>
+                <div className="flex gap-0 md:gap-3">
                   <button
                     onClick={openChainModal}
                     className="text-sm md:text-base"

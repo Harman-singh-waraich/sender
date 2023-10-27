@@ -7,6 +7,7 @@ import { Address, formatUnits, parseUnits } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { Gas } from "@/app/_hooks/useGas";
 import Tooltip from "../../Shared/Tooltip";
+import { useIsMounted } from "@/app/_hooks/useIsMounted";
 
 const Web3Button = dynamic(() => import("../../Shared/Web3Button"));
 const GasSelector = dynamic(() => import("./GasSelector"));
@@ -21,10 +22,11 @@ interface FormData {
 const TxnForm = () => {
   const { transfer, isSubmitting } = useContract();
   const { address: account, isConnected } = useAccount();
+  const isMounted = useIsMounted();
 
   const [formData, setFormData] = useState<FormData>({
     tokenAddress: "",
-    amount: "0",
+    amount: "",
     recipient: "",
     selectedPrice: undefined,
   });
@@ -99,6 +101,8 @@ const TxnForm = () => {
   const selectGasPrice = (gasPrice: Gas) => {
     setFormData({ ...formData, selectedPrice: gasPrice });
   };
+
+  if (!isMounted) return <span className="loading loading-bars"></span>;
 
   return (
     <div
@@ -175,7 +179,7 @@ const TxnForm = () => {
       {/* gas selector */}
       <span className="flex flex-row items-center gap-1 text-gray-400 text-sm font-bold mb-2 ">
         Select a gas price if you want{" "}
-        <Tooltip tip="Suggested gas prices. Testnet prices may not be accurate" />
+        <Tooltip tip="Testnet prices may not be accurate" />
       </span>
       <GasSelector
         selectedPrice={formData.selectedPrice}
