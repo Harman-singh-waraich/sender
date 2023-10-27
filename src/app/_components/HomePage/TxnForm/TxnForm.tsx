@@ -31,7 +31,10 @@ const TxnForm = () => {
     isRefetching,
   } = useBalance({
     address: account,
-    token: formData.tokenAddress as Address,
+    token:
+      formData.tokenAddress !== ""
+        ? (formData.tokenAddress as Address)
+        : undefined,
     watch: true,
   });
 

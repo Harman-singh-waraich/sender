@@ -8,6 +8,7 @@ import React, {
 } from "react";
 
 import { Transaction } from "../_types/types";
+import { useAccount, useNetwork } from "wagmi";
 
 interface TransactionContextType {
   transactions: Transaction[];
@@ -38,13 +39,22 @@ export const TransactionProvider: React.FC<TxnProviderProps> = ({
   children,
 }) => {
   const initialState: Transaction[] = [];
+  const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const [transactions, setTransactions] = useState<Transaction[]>(initialState);
 
   const updateTransactionsFromLocalStorage = () => {
-    const savedState = localStorage.getItem("transactions");
+    const savedState = localStorage.getItem(
+      `transactions_${address}_${chain?.id}`
+    );
     if (savedState) {
       setTransactions([...JSON.parse(savedState)]);
+    } else {
+      localStorage.setItem(
+        `transactions_${address}_${chain?.id}`,
+        JSON.stringify([])
+      );
     }
   };
 
@@ -58,13 +68,16 @@ export const TransactionProvider: React.FC<TxnProviderProps> = ({
     return () => {
       window.removeEventListener("storage", updateTransactionsFromLocalStorage);
     };
-  }, []);
+  }, [address, chain]);
 
   //update txns in local storage
   useEffect(() => {
     if (transactions.length === 0) return;
 
-    localStorage.setItem("transactions", JSON.stringify(transactions));
+    localStorage.setItem(
+      `transactions_${address}_${chain?.id}`,
+      JSON.stringify(transactions)
+    );
   }, [transactions]);
 
   //actions
