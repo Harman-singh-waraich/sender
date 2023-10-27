@@ -7,6 +7,7 @@ import TokenSelector from "./TokenSelector";
 import { Address, formatUnits, parseUnits } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { Gas } from "@/app/_hooks/useGas";
+import Tooltip from "../../Shared/Tooltip";
 interface FormData {
   tokenAddress: Address | string;
   amount: string;
@@ -148,10 +149,11 @@ const TxnForm = () => {
           </label>
         )}
       </div>
+
       {/* recipient */}
       <div className="w-full flex flex-col items-center">
-        <label className="block text-gray-400 text-sm font-bold mb-2 ">
-          Recipient
+        <label className="flex flex-row items-center gap-1 text-gray-400 text-sm font-bold mb-2 ">
+          Recipient <Tooltip tip="Address to send tokens to" />
         </label>
         <input
           type="text"
@@ -166,15 +168,19 @@ const TxnForm = () => {
           placeholder="Enter recipient"
         />
       </div>
+
       {/* gas selector */}
-      <span className="block text-gray-400 text-sm font-bold mb-2 ">
-        Select a gas price if you want
+      <span className="flex flex-row items-center gap-1 text-gray-400 text-sm font-bold mb-2 ">
+        Select a gas price if you want{" "}
+        <Tooltip tip="Suggested gas prices. Testnet prices may not be accurate" />
       </span>
       <GasSelector
         selectedPrice={formData.selectedPrice}
         onSelect={selectGasPrice}
         isDisabled={isSubmitting}
       />
+
+      {/* submit button */}
       <div className="flex items-center justify-center">
         <button
           type="submit"
