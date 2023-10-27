@@ -6,7 +6,9 @@ import { WagmiProvider } from "../_providers/walletProvider";
 import { TransactionProvider } from "../_providers/transactionProvider";
 import siteMetadata from "../_utils/siteMetaData";
 import Head from "next/head";
-import Footer from "../_components/Shared/Footer";
+
+import dynamic from "next/dynamic";
+const Footer = dynamic(() => import("../_components/Shared/Footer"));
 
 const dosis = Dosis({ subsets: ["latin"] });
 

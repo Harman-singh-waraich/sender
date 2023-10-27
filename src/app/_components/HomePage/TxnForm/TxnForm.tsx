@@ -1,14 +1,16 @@
 "use client";
+import dynamic from "next/dynamic";
 import React, { useMemo, useState } from "react";
-import GasSelector from "./GasSelector";
 import { Calldata, useContract } from "@/app/_hooks/useContract";
 import { balanceCheck, isValidEthereumAddress } from "@/app/_utils/helpers";
-import TokenSelector from "./TokenSelector";
 import { Address, formatUnits, parseUnits } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { Gas } from "@/app/_hooks/useGas";
 import Tooltip from "../../Shared/Tooltip";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+
+const Web3Button = dynamic(() => import("../../Shared/Web3Button"));
+const GasSelector = dynamic(() => import("./GasSelector"));
+const TokenSelector = dynamic(() => import("./TokenSelector"));
 interface FormData {
   tokenAddress: Address | string;
   amount: string;
@@ -18,8 +20,7 @@ interface FormData {
 
 const TxnForm = () => {
   const { transfer, isSubmitting } = useContract();
-  const { address: account, isDisconnected } = useAccount();
-  const { openConnectModal } = useConnectModal();
+  const { address: account, isConnected } = useAccount();
 
   const [formData, setFormData] = useState<FormData>({
     tokenAddress: "",
@@ -63,9 +64,6 @@ const TxnForm = () => {
     e.preventDefault();
     console.log("Form submitted:", formData);
     if (isSubmittionDisabled || !tokenBalance?.decimals) return;
-
-    //open modal if disconneted
-    if (isDisconnected) openConnectModal?.();
 
     const callData: Calldata = {
       tokenAddress: formData.tokenAddress as `0x${string}`,
@@ -186,23 +184,27 @@ const TxnForm = () => {
       />
 
       {/* submit button */}
-      <div className="flex items-center justify-center">
-        <button
-          type="submit"
-          disabled={isSubmittionDisabled}
-          className="btn btn-accent btn-outline"
-          onClick={handleSubmit}
-        >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-1">
-              Confirming
-              <span className="loading loading-bars loading-sm"></span>
-            </span>
-          ) : (
-            "Submit"
-          )}
-        </button>
-      </div>
+      {isConnected ? (
+        <div className="flex items-center justify-center">
+          <button
+            type="submit"
+            disabled={isSubmittionDisabled}
+            className="btn btn-accent btn-outline"
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-1">
+                Confirming
+                <span className="loading loading-bars loading-sm"></span>
+              </span>
+            ) : (
+              "Submit"
+            )}
+          </button>
+        </div>
+      ) : (
+        <Web3Button />
+      )}
     </div>
   );
 };
