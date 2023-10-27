@@ -8,6 +8,7 @@ import { Address, formatUnits, parseUnits } from "viem";
 import { useAccount, useBalance } from "wagmi";
 import { Gas } from "@/app/_hooks/useGas";
 import Tooltip from "../../Shared/Tooltip";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 interface FormData {
   tokenAddress: Address | string;
   amount: string;
@@ -17,7 +18,8 @@ interface FormData {
 
 const TxnForm = () => {
   const { transfer, isSubmitting } = useContract();
-  const { address: account } = useAccount();
+  const { address: account, isDisconnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
 
   const [formData, setFormData] = useState<FormData>({
     tokenAddress: "",
@@ -61,6 +63,9 @@ const TxnForm = () => {
     e.preventDefault();
     console.log("Form submitted:", formData);
     if (isSubmittionDisabled || !tokenBalance?.decimals) return;
+
+    //open modal if disconneted
+    if (isDisconnected) openConnectModal?.();
 
     const callData: Calldata = {
       tokenAddress: formData.tokenAddress as `0x${string}`,

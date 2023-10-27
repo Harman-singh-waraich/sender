@@ -1,0 +1,22 @@
+const siteMetadata = {
+  title: "Sender",
+  author: "Harmeet Singh",
+  headerTitle: "Sender",
+  description: "Sends tokens with ease",
+  language: "en-us",
+  locale: "en-US",
+  type: "website",
+  url: process.env.NEXT_PUBLIC_BASE_URL,
+  theme: "system",
+  siteUrl: process.env.NEXT_PUBLIC_BASE_URL,
+  siteLogo: "/icon.svg",
+  socialBanner: "/socialBanner.png",
+  email: "waraichharman68@gmail.com",
+  github: "https://github.com/Harman-singh-waraich",
+  twitter: "https://twitter.com/TurbanCoder",
+  linkedin: "https://www.linkedin.com/in/turban-coder/",
+  robots: "index, follow",
+  keywords: "send ERC20 ethereum web3",
+  sitename: "Sender",
+};
+export default siteMetadata;
