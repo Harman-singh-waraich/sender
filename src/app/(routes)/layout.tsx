@@ -6,6 +6,7 @@ import { WagmiProvider } from "../_providers/walletProvider";
 import { TransactionProvider } from "../_providers/transactionProvider";
 import siteMetadata from "../_utils/siteMetaData";
 import Head from "next/head";
+import Footer from "../_components/Shared/Footer";
 
 const dosis = Dosis({ subsets: ["latin"] });
 
@@ -68,6 +69,7 @@ export default function RootLayout({
           <TransactionProvider>
             <Navbar />
             {children}
+            <Footer />
           </TransactionProvider>
         </WagmiProvider>
       </body>
