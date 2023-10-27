@@ -25,19 +25,15 @@ const StatusContainer = ({ txn }: Props) => {
     hash: status === TransactionStatus.pending ? hash! : undefined, //only run for pending txn, this hooks doesnt run when hash is undefined
     scopeKey: hash,
     onSuccess(data) {
-      console.log("success", data.transactionHash);
-
       updateTxnValue(data.transactionHash, {
         status: TransactionStatus.success,
       });
     },
     onError(err) {
-      console.log(err);
       updateTxnValue(hash, { status: TransactionStatus.failed });
     },
     onReplaced(response) {
       //on replace add new txn to state and update previous one
-      console.log("replaced", response);
       const newStatus = TransactionStatus[response.reason];
 
       //updating the previous txn

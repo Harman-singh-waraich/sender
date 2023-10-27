@@ -64,7 +64,6 @@ const TxnForm = () => {
   // Function to handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
 
     if (isSubmittionDisabled || !tokenBalance?.decimals) return;
 
@@ -115,7 +114,7 @@ const TxnForm = () => {
       <TokenSelector
         selectedToken={formData.tokenAddress as Address}
         setSelectedToken={handleChange}
-        isDisabled={isSubmitting}
+        isDisabled={isSubmitting || !isConnected}
       />
 
       {/* amount */}
@@ -141,7 +140,7 @@ const TxnForm = () => {
             placeholder="Enter amount"
           />
           <button
-            className="join-item btn btn-primary disabled:btn-outline"
+            className="join-item btn btn-primary disabled:border-purple-100 disabled:border-opacity-30"
             onClick={handleMax}
             disabled={isSubmitting || formData.tokenAddress == ""}
           >

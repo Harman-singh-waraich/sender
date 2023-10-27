@@ -67,7 +67,6 @@ export const useContract = () => {
       })
       .catch((err) => {
         setSubmitting(false);
-        console.log(err);
       });
   };
 

@@ -54,7 +54,7 @@ const TokenSelector = ({
         {/* select options */}
         <select
           name="tokenAddress"
-          className="join-item select select-bordered select-primary"
+          className="join-item select select-bordered select-primary disabled:border-purple-100 disabled:border-opacity-30"
           onChange={setSelectedToken}
           value={selectedToken || customToken || "default"}
           disabled={isDisabled || isLoadingAssets}

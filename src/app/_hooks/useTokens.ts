@@ -41,11 +41,11 @@ export const useTokens = () => {
     fetch(url, options)
       .then((res) => res.json())
       .then((json) => json.result.tokenBalances)
-      .catch((err) => console.error("error:" + err));
+      .catch((err) => {});
 
   //load initial data with 1 min interval
   const { data, isLoading, isValidating } = useSWR(
-    [url, options],
+    address ? [url, options] : null,
     ([url, options]) => fetcher(url, options),
     { refreshInterval: 60000 }
   );
