@@ -142,12 +142,14 @@ const TxnForm = () => {
           <button
             className="join-item btn btn-primary disabled:border-purple-100 disabled:border-opacity-30"
             onClick={handleMax}
-            disabled={isSubmitting || formData.tokenAddress == ""}
+            disabled={
+              isSubmitting || formData.tokenAddress == "" || !tokenBalance
+            }
           >
             Max
           </button>
         </div>
-        {formData.tokenAddress && (
+        {formData.tokenAddress && tokenBalance && (
           <label
             className={`block text-sm font-bold mt-2 transition-opacity duration-1000 ${
               isRefetching ? "opacity-50" : "opacity-100"

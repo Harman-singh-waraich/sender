@@ -33,7 +33,7 @@ export const useGas = () => {
     error,
     isLoading,
     isValidating,
-  } = useSWR(chain?.id ? `/api/gas-tracker?id=${chain?.id}` : null, fetcher, {
+  } = useSWR(`/api/gas-tracker?id=${chain?.id}`, fetcher, {
     refreshInterval: 7000,
   });
 
