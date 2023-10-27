@@ -1,6 +1,7 @@
 import { Address, parseUnits } from "viem";
 import { EXPLORER_BASE } from "../_constants";
 import { TransactionStatus } from "../_types/types";
+import { GasTypes } from "../_hooks/useGas";
 
 export const isValidEthereumAddress = (address: string) =>
   /^0x[a-fA-F0-9]{40}$/.test(address);
@@ -44,3 +45,17 @@ export const balanceCheck = (
   if (!balance || !decimals) return true;
   return parseUnits(inputAmount, decimals) <= balance;
 };
+
+export const gasText = (type: GasTypes) =>
+  type === GasTypes.slow
+    ? "Slow - 🐢"
+    : type === GasTypes.avg
+    ? "Avg. - 🦊"
+    : "Fast - 🚀";
+
+export const gasBtnStyle = (type: GasTypes) =>
+  type === GasTypes.slow
+    ? "btn-error"
+    : type === GasTypes.avg
+    ? "btn-info"
+    : "btn-success";

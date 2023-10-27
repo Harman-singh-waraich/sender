@@ -18,5 +18,3 @@ export type Transaction = {
   symbol: string;
   decimals: number;
 };
-
-export type Gas = { speed: "custom" | "slow" | "avg" | "fast"; value?: bigint };

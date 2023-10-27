@@ -3,15 +3,15 @@ import React, { useMemo, useState } from "react";
 import GasSelector from "./GasSelector";
 import { Calldata, useContract } from "@/app/_hooks/useContract";
 import { balanceCheck, isValidEthereumAddress } from "@/app/_utils/helpers";
-import { Gas } from "@/app/_types/types";
 import TokenSelector from "./TokenSelector";
 import { Address, formatUnits, parseUnits } from "viem";
 import { useAccount, useBalance } from "wagmi";
+import { Gas } from "@/app/_hooks/useGas";
 interface FormData {
   tokenAddress: Address | string;
   amount: string;
   recipient: Address | string;
-  selectedPrice: Gas;
+  selectedPrice: Gas | undefined;
 }
 
 const TxnForm = () => {
@@ -22,7 +22,7 @@ const TxnForm = () => {
     tokenAddress: "",
     amount: "0",
     recipient: "",
-    selectedPrice: { speed: "custom" } as Gas,
+    selectedPrice: undefined,
   });
 
   const {
@@ -65,7 +65,7 @@ const TxnForm = () => {
       tokenAddress: formData.tokenAddress as `0x${string}`,
       recipient: formData.recipient as `0x${string}`,
       amount: parseUnits(formData.amount, tokenBalance?.decimals),
-      gasPrice: formData.selectedPrice.value,
+      gasPrice: formData.selectedPrice?.value,
       symbol: tokenBalance.symbol,
       decimals: tokenBalance.decimals,
     };

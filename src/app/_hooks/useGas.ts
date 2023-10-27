@@ -1,52 +1,47 @@
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { parseGwei } from "viem";
+import { useNetwork } from "wagmi";
+
+export enum GasTypes {
+  slow,
+  avg,
+  fast,
+}
+export type Gas = { speed: GasTypes; value?: bigint };
+
+type GasEstimate = {
+  type: GasTypes;
+  gas: string;
+  estimatedTime: string;
+};
 
 //TODO :- make serverless functions to fetch gas estimates for goerli
 export const useGas = () => {
+  const { chain } = useNetwork();
+
   const fetcher = (url: string) =>
     fetch(url)
       .then((res) => res.json())
-      .then((data) => [
-        data.result.SafeGasPrice,
-        data.result.ProposeGasPrice,
-        data.result.FastGasPrice,
-      ]);
+      .then((data) => {
+        if (data.status !== 200) {
+          throw Error("unable to fetch");
+        }
+        return data.gasEstimates;
+      });
 
-  const { data, error, isLoading, isValidating } = useSWR(
-    `https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=MXEI49CNKBAJZKYCCKUW2YSVR4X7B1VV8R`,
-    fetcher,
-    { refreshInterval: 10000 }
-  );
-
-  const [resolvedGasEstimates, setResolvedGasEstimates] = useState<any[]>([]);
-  const [isFetchingTime, setIsFetchingTime] = useState(false);
-
-  //fetch respective estimated times for each gas value
-  useEffect(() => {
-    const fetchGasEstimates = async () => {
-      setIsFetchingTime(true);
-      const gasEstimates = await Promise.all(
-        data?.map(async (gas) => {
-          const res = await fetch(
-            `https://api.etherscan.io/api?module=gastracker&action=gasestimate&gasprice=${parseGwei(
-              gas
-            )}&apikey=MXEI49CNKBAJZKYCCKUW2YSVR4X7B1VV8R`
-          );
-          const json = await res.json();
-          return { gas: gas, estimatedTime: json.result };
-        }) || []
-      );
-      setIsFetchingTime(false);
-      setResolvedGasEstimates([...gasEstimates]);
-    };
-
-    fetchGasEstimates();
-  }, [data]);
+  const {
+    data: gasEstimates,
+    error,
+    isLoading,
+    isValidating,
+  } = useSWR(`/api/gas-tracker?id=${chain?.name}`, fetcher, {
+    refreshInterval: 10000,
+  });
 
   return {
-    gasEstimates: resolvedGasEstimates,
-    isLoading: isLoading || isValidating || isFetchingTime,
+    gasEstimates: gasEstimates as GasEstimate[],
+    isLoading: isLoading || isValidating,
     isError: error,
   };
 };
