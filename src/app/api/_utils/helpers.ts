@@ -8,6 +8,11 @@ enum GasTypes {
   fast,
 }
 
+const supportedChains: { [key: string]: string } = {
+  "5": "goerli",
+  "11155111": "sepolia",
+};
+
 //gas in gwei
 const getEstimatedTime = async (gas: string) => {
   const res = await fetch(
@@ -19,15 +24,16 @@ const getEstimatedTime = async (gas: string) => {
   return json.result;
 };
 
-const getBlockNumber = async () => {
+const getBlockNumber = async (id: string | null) => {
   const options = {
     method: "POST",
     headers: { accept: "application/json", "content-type": "application/json" },
     body: JSON.stringify({ id: 1, jsonrpc: "2.0", method: "eth_blockNumber" }),
   };
-
   const res = await fetch(
-    "https://eth-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY,
+    `https://eth-${id ? supportedChains[id] : "goerli"}.g.alchemy.com/v2/${
+      process.env.ALCHEMY_KEY
+    }`,
     options
   );
 
@@ -77,12 +83,11 @@ export const getMainnetEstimates = async () => {
 };
 
 //makeshift api, estimating based on transactions in last block
-export const getGoerliEstimates = async () => {
+export const getTestnetEstimates = async (chainId: string | null) => {
   try {
-    const url =
-      "https://eth-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY;
-
-    const block = await getBlockNumber();
+    const url = `https://eth-${
+      chainId ? supportedChains[chainId] : "goerli"
+    }.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`;
 
     const requestData = {
       id: 1,
@@ -90,7 +95,7 @@ export const getGoerliEstimates = async () => {
       method: "alchemy_getTransactionReceipts",
       params: [
         {
-          blockNumber: await getBlockNumber(),
+          blockNumber: await getBlockNumber(chainId),
         },
       ],
     };
