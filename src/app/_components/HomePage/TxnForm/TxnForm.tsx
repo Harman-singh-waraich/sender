@@ -1,10 +1,10 @@
 "use client";
 import dynamic from "next/dynamic";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Calldata, useContract } from "@/app/_hooks/useContract";
 import { balanceCheck, isValidEthereumAddress } from "@/app/_utils/helpers";
 import { Address, formatUnits, parseUnits } from "viem";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance, useNetwork } from "wagmi";
 import { Gas } from "@/app/_hooks/useGas";
 import Tooltip from "../../Shared/Tooltip";
 import { useIsMounted } from "@/app/_hooks/useIsMounted";
@@ -18,18 +18,20 @@ interface FormData {
   recipient: Address | string;
   selectedPrice: Gas | undefined;
 }
+const initialFormData = {
+  tokenAddress: "",
+  amount: "",
+  recipient: "",
+  selectedPrice: undefined,
+};
 
 const TxnForm = () => {
   const { transfer, isSubmitting } = useContract();
   const { address: account, isConnected } = useAccount();
+  const { chain } = useNetwork();
   const isMounted = useIsMounted();
 
-  const [formData, setFormData] = useState<FormData>({
-    tokenAddress: "",
-    amount: "",
-    recipient: "",
-    selectedPrice: undefined,
-  });
+  const [formData, setFormData] = useState<FormData>(initialFormData);
 
   const {
     data: tokenBalance,
@@ -60,6 +62,8 @@ const TxnForm = () => {
     [isSubmitting, formData]
   );
 
+  useEffect(() => setFormData(initialFormData), [chain]);
+
   //handlers
   // Function to handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -77,6 +81,8 @@ const TxnForm = () => {
     };
 
     transfer(callData);
+
+    setFormData(initialFormData);
   };
 
   // Function to handle input changes
